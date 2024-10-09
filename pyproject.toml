@@ -1,49 +1,103 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
-authors = ["Joren Hammudoglu <jhammudoglu@gmail.com>"]
+#
+# project
+#
+
+[project]
+name = "scipy-stubs"
+version = "1.14.1.0.dev0"
+description = "Typing stubs for SciPy"
+readme = "README.md"
+license = "BSD-3-Clause"
+authors = [
+    {name = "Joren Hammudoglu", "email" = "jhammudoglu@gmail.com"},
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering",
-    "Typing :: Stubs Only",
-    "Typing :: Typed",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Typing :: Stubs Only",
+    "Typing :: Typed",
 ]
-description = "Type stubs for SciPy"
-documentation = "https://github.com/jorenham/scipy-stubs?tab=readme-ov-file#scipy-stubs"
-license = "BSD-3-Clause"
-name = "scipy-stubs"
-packages = [{include = "scipy-stubs"}]
-readme = "README.md"
-repository = "https://github.com/jorenham/scipy-stubs/"
-version = "1.4.1a4.dev0"
+requires-python = ">=3.10.1"
+dependencies = [
+    "scipy>=1.14.1,<1.15",
+    "optype>=0.6.1,<0.7",
+]
 
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/jorenham/scipy-stubs/issues"
-"Changelog" = "https://github.com/jorenham/scipy-stubs/releases"
+[project.urls]
+Repository = "https://github.com/jorenham/scipy-stubs/"
+Issues = "https://github.com/jorenham/scipy-stubs/issues"
+Changelog = "https://github.com/jorenham/scipy-stubs/releases"
+Funding = "https://github.com/sponsors/jorenham"
 
-[tool.poetry.dependencies]
-python = "^3.10.1"
-optype = "^0.6.1"
-scipy = "^1.14.1"
+#
+# hatch
+#
 
-[tool.poetry.group.lint.dependencies]
-basedmypy = "^2.6.0"
-basedpyright = "^1.18.4"
-ruff = "^0.6.9"
+[tool.hatch.build.targets.wheel]
+packages = ["scipy-stubs"]
 
-[tool.poetry.group.dev.dependencies]
-poethepoet = "^0.29.0"
-pre-commit = "^4.0.1"
+[tool.hatch.build.targets.sdist]
+packages = ["scipy-stubs"]
+exclude = [
+    "/.cache",
+    "/.github",
+    "/.mypy_cache",
+    "/.pytest_cache",
+    "/.ruff_cache",
+    "/.tox",
+    "/.venv",
+    "/.vscode",
+    "/dist",
+    "/tests",
+    ".editorconfig",
+    ".gitignore",
+    ".mardownlint.yaml",
+    ".pre-commit-config.yaml",
+    ".python-version",
+    "CODE_OF_CONDUCT.md",
+    "README.md",
+    "SECURITY.md",
+    "uv.lock",
+]
+
+#
+# uv
+#
+
+[tool.uv]
+dev-dependencies = [
+    "scipy==1.14.1",
+
+    "basedmypy>=2.6.0,<3",
+    "basedpyright>=1.18.4,<2",
+    "ruff>=0.6.9,<1",
+
+    "poethepoet>=0.29.0,<1",
+    "pre-commit>=4.0.1,<5",
+]
+python-downloads = "manual"
+python-preference = "system"
+
+#
+# poe
+#
 
 [tool.poe.executor]
-type = "poetry"
+type = "virtualenv"
+location = "./.venv"
 
 [tool.poe.tasks]
 clean = """
@@ -58,16 +112,16 @@ lint = "ruff check"
 format = "ruff format"
 pre-commit = "pre-commit run --all-files"
 
-_typetest_bpr = "basedpyright typetests"
-_typetest_mypy = "mypy --config-file=pyproject.toml typetests"
+_typetest_bpr = "basedpyright tests/typetests"
+_typetest_mypy = "mypy --config-file=pyproject.toml tests/typetests"
 typetest = ["_typetest_bpr", "_typetest_mypy"]
-
-[tool.poe.tasks.pyright]
-cmd = "basedpyright scipy-stubs/$path"
-args = [{name = "path", positional = true, multiple = true, default = ""}]
 
 [tool.poe.tasks.mypy]
 cmd = "mypy --config-file=pyproject.toml scipy-stubs/$path"
+args = [{name = "path", positional = true, multiple = false, default = ""}]
+
+[tool.poe.tasks.pyright]
+cmd = "basedpyright scipy-stubs/$path"
 args = [{name = "path", positional = true, multiple = false, default = ""}]
 
 [tool.poe.tasks.verifytypes]
@@ -83,6 +137,10 @@ stubtest
 """
 args = [{name = "modules", positional = true, multiple = true, default = "scipy"}]
 
+#
+# [based]mypy
+#
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
@@ -93,8 +151,12 @@ disallow_untyped_defs = false  # TODO
 disallow_incomplete_defs = false  # TODO
 warn_unused_ignores = true
 
+#
+# [based]pyright
+#
+
 [tool.pyright]
-include = ["scipy-stubs", "typetests"]
+include = ["scipy-stubs", "tests/typetests"]
 venv = ".venv"
 venvPath = "."
 stubPath = "."
@@ -110,6 +172,10 @@ reportImplicitRelativeImport = true
 reportInvalidCast = true
 reportPrivateUsage = false
 reportUnnecessaryTypeIgnoreComment = true
+
+#
+# ruff
+#
 
 [tool.ruff]
 builtins = ["reveal_locals", "reveal_type"]
