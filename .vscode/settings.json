@@ -9,6 +9,13 @@
     "editor.rulers": [130]
   },
   "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    },
     "editor.rulers": [130]
   },
   "[yaml]": {
@@ -23,5 +30,7 @@
     "--config-file=${workspaceFolder}/pyproject.toml"
   ],
   "mypy-type-checker.cwd": "${fileDirname}",
-  "mypy-type-checker.path": ["uv", "run", "--no-editable", "mypy"]
+  "mypy-type-checker.path": ["uv", "run", "--no-editable", "mypy"],
+  "ruff.lint.args": [], // Empty so user settings are skipped to favor the toml config
+  "ruff.format.args": [] // Empty so user settings are skipped to favor the toml config
 }
