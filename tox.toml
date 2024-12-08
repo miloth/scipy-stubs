@@ -39,3 +39,15 @@ commands = [["uv", "run", "--frozen", "--no-editable", "--isolated", "--refresh-
 description = "basedpyright"
 dependency_groups = ["typecheck"]
 commands = [["basedpyright", "scipy-stubs", "codegen"]]
+
+[env.basedmypy-tests]
+description = "basedmypy tests"
+dependency_groups = ["typecheck"]
+pass_env = ["SCIPY_MIN_PY", "SCIPY_MIN_NP"]
+# uv_sync_flags = ["--no-editable", "--isolated", "--refresh-package=scipy-stubs"]
+commands = [["uv", "run", "--frozen", "--no-editable", "--isolated", "--refresh-package=scipy-stubs", "--python=$SCIPY_MIN_PY", "--with=numpy==$SCIPY_MIN_NP", "mypy", "--config-file=pyproject.toml", "tests"]]
+
+[env.basedpyright-tests]
+description = "basedpyright tests"
+dependency_groups = ["typecheck"]
+commands = [["basedpyright", "tests"]]

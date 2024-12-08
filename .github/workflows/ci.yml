@@ -70,10 +70,22 @@ jobs:
       - name: setup uv
         uses: astral-sh/setup-uv@v4
 
+      - name: setup tox
+        run: uv tool install tox --with tox-uv
+
       - name: install
         run: |
           uv sync --frozen --python=$(uv run --frozen scripts/version_bounds.py python)
           uv pip install --upgrade numpy==$(uv run --frozen scripts/version_bounds.py numpy)
+
+      - name: set env scipy py
+        run: echo "SCIPY_MIN_PY=$(uv run --frozen scripts/version_bounds.py python)" >> $GITHUB_ENV
+
+      - name: set env scipy numpy
+        run: echo "SCIPY_MIN_NP=$(uv run --frozen scripts/version_bounds.py numpy)" >> $GITHUB_ENV
+
+      - name: basedmypy test
+        run: tox -e=basedmypy-tests
 
       - name: typetest
         run: uv run poe typetest
