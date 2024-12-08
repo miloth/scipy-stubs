@@ -301,3 +301,21 @@ runner = "uv-venv-lock-runner"
 description = "repo-review"
 allowlist_externals = ["poe"]
 commands = [["poe", "repo-review"]]
+
+[tool.tox.env.lint]
+runner = "uv-venv-lock-runner"
+description = "repo-review"
+allowlist_externals = ["poe"]
+commands = [["poe", "lint"]]
+
+[tool.tox.env.basedmypy]
+runner = "uv-venv-lock-runner"
+description = "repo-review"
+allowlist_externals = ["poe"]
+commands = [["poe", "mypy"]]
+
+[tool.tox.env.basedpyright]
+runner = "uv-venv-lock-runner"
+description = "repo-review"
+allowlist_externals = ["poe"]
+commands = [["poe", "pyright"]]
