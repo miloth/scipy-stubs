@@ -85,7 +85,7 @@ jobs:
         run: echo "SCIPY_MIN_NP=$(uv run --frozen scripts/version_bounds.py numpy)" >> $GITHUB_ENV
 
       - name: print ens
-        run: echo $SCIPY_MIN_PY && echo $SCIPY_MIN_NP
+        run: echo "min py $SCIPY_MIN_PY" && echo "min np $SCIPY_MIN_NP"
 
       - name: basedmypy test
         run: tox -e=basedmypy-tests
