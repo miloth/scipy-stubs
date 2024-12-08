@@ -45,6 +45,7 @@ description = "basedmypy tests"
 dependency_groups = ["typecheck"]
 pass_env = ["SCIPY_MIN_PY", "SCIPY_MIN_NP"]
 # uv_sync_flags = ["--no-editable", "--isolated", "--refresh-package=scipy-stubs"]
+allowlist_externals = ["echo"]
 commands = [
     ["echo", "min py $SCIPY_MIN_PY"],
     ["echo", "min np $SCIPY_MIN_NP"],
