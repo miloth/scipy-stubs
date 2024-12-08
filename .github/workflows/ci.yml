@@ -34,6 +34,9 @@ jobs:
       - name: setup tox
         run: uv tool install tox --with tox-uv
 
+      - name: setup poe
+        run: uv tool install poethepoet
+
       - name: lint
         run: tox -e=lint
 
