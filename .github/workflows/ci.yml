@@ -55,11 +55,14 @@ jobs:
       - name: install
         run: uv sync --frozen --python 3.13
 
-      - name: typetest
-        run: uv run poe typetest
+      - name: basedmypy test
+        run: tox -e=basedmypy-tests
+
+      - name: basedmypy test
+        run: tox -e=basedmypy-tests
 
       - name: stubtest
-        run: uv run poe stubtest
+        run: tox -e=stubtest
 
   typetest-oldest-supported-numpy:
     timeout-minutes: 5
@@ -90,8 +93,8 @@ jobs:
       - name: basedmypy test
         run: tox -e=basedmypy-tests
 
-      - name: typetest
-        run: uv run poe typetest
+      - name: basedmypy test
+        run: tox -e=basedmypy-tests
 
       - name: stubtest
-        run: uv run poe stubtest
+        run: tox -e=stubtest
