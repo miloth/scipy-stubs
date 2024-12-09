@@ -58,6 +58,9 @@ jobs:
       - name: setup tox
         run: uv tool install tox --with tox-uv
 
+      - name: print versions
+        run: tox -e=min-versions-test
+
       - name: basedmypy test
         run: tox -e=basedmypy-tests
 
@@ -92,6 +95,9 @@ jobs:
 
       - name: print ens
         run: echo "min py $SCIPY_MIN_PY" && echo "min np $SCIPY_MIN_NP"
+
+      - name: print versions
+        run: tox -e=min-versions-test
 
       - name: basedmypy test
         run: tox -e=basedmypy-tests

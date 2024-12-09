@@ -40,6 +40,16 @@ description = "basedpyright"
 dependency_groups = ["typecheck"]
 commands = [["basedpyright", "scipy-stubs", "codegen"]]
 
+[env.min-versions-test]
+description = "min versions tests"
+# runner = "uv-venv-runner"
+dependency_groups = ["typecheck"]
+# uv_sync_flags = ["--no-editable", "--isolated", "--refresh-package=scipy-stubs"]
+commands = [
+    ["python", "--version"],
+    ["uv", "pip", "show", "numpy"]
+]
+
 [env.basedmypy-tests]
 description = "basedmypy tests"
 # runner = "uv-venv-runner"
