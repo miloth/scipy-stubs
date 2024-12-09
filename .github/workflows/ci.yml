@@ -62,7 +62,7 @@ jobs:
         run: tox -e=basedmypy-tests
 
       - name: basedmypy test
-        run: tox -e=basedmypy-tests
+        run: tox -e=basedpyright-tests
 
       - name: stubtest
         run: tox -e=stubtest
