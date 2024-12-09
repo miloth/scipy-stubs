@@ -38,7 +38,7 @@ commands = [["uv", "run", "--frozen", "--no-editable", "--isolated", "--refresh-
 [env.basedpyright]
 description = "basedpyright"
 dependency_groups = ["typecheck"]
-commands = [["basedpyright", "scipy-stubs", "codegen"]]
+commands = [["uv", "run", "--frozen", "--no-editable", "--isolated", "--refresh-package=scipy-stubs", "basedpyright", "scipy-stubs", "codegen"]]
 
 [env.basedmypy-tests]
 description = "basedmypy tests"
