@@ -83,9 +83,7 @@ jobs:
         run: uv tool install tox --with tox-uv
 
       - name: install
-        run: |
-          uv sync --frozen --python=$(uv run --frozen scripts/version_bounds.py python)
-          uv pip install --upgrade numpy==$(uv run --frozen scripts/version_bounds.py numpy)
+        run: uv add --python=$(uv run --frozen scripts/version_bounds.py python) numpy==$(uv run --frozen scripts/version_bounds.py numpy)
 
       - name: set env scipy py
         run: echo "SCIPY_MIN_PY=$(uv run --frozen scripts/version_bounds.py python)" >> $GITHUB_ENV
