@@ -102,8 +102,8 @@ jobs:
       - name: basedmypy test
         run: tox -e=basedmypy-tests
 
-      - name: basedpytight test
-        run: tox -e=basedpytight-tests
+      - name: basedpyright test
+        run: tox -e=basedpyright-tests
 
       - name: stubtest
         run: tox -e=stubtest
