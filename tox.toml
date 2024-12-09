@@ -42,12 +42,17 @@ commands = [["basedpyright", "scipy-stubs", "codegen"]]
 
 [env.basedmypy-tests]
 description = "basedmypy tests"
-dependency_groups = ["typecheck"]
-pass_env = ["SCIPY_MIN_PY", "SCIPY_MIN_NP"]
-# uv_sync_flags = ["--no-editable", "--isolated", "--refresh-package=scipy-stubs"]
-allowlist_externals = ["echo"]
+# runner = "uv-venv-runner"
+deps = ["numpy==1.23.5", "scipy"]
+base_python = ["3.10"]
+install_command = "pip install {opts} {packages} && uv build && pip install build/*"
+# install_command = "uv sync --frozen --no-install-project --python 3.13 $$ uv build && uv pip install ./dist/*"
 commands = [
-    ["uv", "run", "--frozen", "--no-editable", "--isolated", "--refresh-package=scipy-stubs", "--python=$(SCIPY_MIN_PY)", "--with=numpy==$(SCIPY_MIN_NP)", "mypy", "--config-file=pyproject.toml", "tests"]
+    # ["python", "--version"],
+    # ["uv", "sync", "--frozen", "--no-install-project", "--python=3.13"],
+    # ["uv", "build"],
+    # ["uv", "pip install", "./dist/*"],
+    ["mypy", "--config-file=pyproject.toml", "tests"]
 ]
 
 [env.basedpyright-tests]
