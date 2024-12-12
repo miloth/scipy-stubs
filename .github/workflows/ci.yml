@@ -2,8 +2,7 @@ name: CI
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -11,11 +10,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
+env:
+  UV_LOCKED: true
+
 jobs:
   lint:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -30,18 +31,21 @@ jobs:
 
       - name: setup uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          python-version: "3.13"
 
-      - name: install
-        run: uv sync --frozen --python 3.13
+      - name: setup tox
+        run: uv tool install tox --with tox-uv
 
       - name: lint
-        run: uv run poe lint
+        run: tox -e=lint
 
       - name: basedmypy
-        run: uv run poe mypy
+        run: tox -e=basedmypy
 
       - name: basedpyright
-        run: uv run poe pyright
+        run: tox -e=basedpyright
 
   typetest:
     timeout-minutes: 5
@@ -51,15 +55,27 @@ jobs:
 
       - name: setup uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          python-version: "3.13"
 
       - name: install
-        run: uv sync --frozen --python 3.13
+        run: uv sync --no-editable
 
-      - name: typetest
-        run: uv run poe typetest
+      - name: setup tox
+        run: uv tool install tox --with tox-uv
+
+      - name: print versions
+        run: tox -e=min-versions-test
+
+      - name: basedmypy test
+        run: tox -e=basedmypy-tests
+
+      - name: basedpyright test
+        run: tox -e=basedpyright-tests
 
       - name: stubtest
-        run: uv run poe stubtest
+        run: tox -e=stubtest
 
   typetest-oldest-supported-numpy:
     timeout-minutes: 5
@@ -69,14 +85,32 @@ jobs:
 
       - name: setup uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          python-version: "3.10"
+
+      - name: setup tox
+        run: uv tool install tox --with tox-uv
+
+      - name: set env scipy py
+        run: echo "SCIPY_MIN_PY=$(uv run scripts/version_bounds.py python)" >> $GITHUB_ENV
+
+      - name: set env scipy numpy
+        run: echo "SCIPY_MIN_NP=$(uv run scripts/version_bounds.py numpy)" >> $GITHUB_ENV
 
       - name: install
         run: |
-          uv sync --frozen --python=$(uv run --frozen scripts/version_bounds.py python)
-          uv pip install --upgrade numpy==$(uv run --frozen scripts/version_bounds.py numpy)
+          rm -rf .venv
+          uv add --python=$SCIPY_MIN_PY numpy==$SCIPY_MIN_NP
 
-      - name: typetest
-        run: uv run poe typetest
+      - name: print versions
+        run: uv run --python=$SCIPY_MIN_PY tox -e=min-versions-test
+
+      - name: basedmypy test
+        run: uv run --python=$SCIPY_MIN_PY tox -e=basedmypy-tests
+
+      - name: basedpyright test
+        run: uv run --python=$SCIPY_MIN_PY tox -e=basedpyright-tests
 
       - name: stubtest
-        run: uv run poe stubtest
+        run: uv run --python=$SCIPY_MIN_PY tox -e=stubtest
